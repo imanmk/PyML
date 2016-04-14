@@ -58,7 +58,6 @@ stepName_dict = dict(zip(stepName, encoded_stepName))
 # dimensions = 809694 x 2
 
 
-print("esn1: ", encoded_stepName[0])
 
 x_array = []
 
@@ -115,7 +114,7 @@ print("Y Shape: ", Y.shape)
 # looks up the keys for input from dict
 # passes the values to KNN function
 
-knn = neighbors.KNeighborsClassifier(n_neighbors=41)
+knn = neighbors.KNeighborsClassifier(n_neighbors=41, weights='distance')
 knn.fit(X, Y)
 
 
@@ -141,10 +140,10 @@ def predict_cfa(studentId, stepName):
 def calculate_rmse():
 
     prediction_array = np.array([])
-    for element in range(len(encoded_studentId)):
-        prediction = knn.predict([[encoded_studentId[element], encoded_stepName[element]]])
-        prediction_array = np.append(prediction_array, prediction[0])
-        print("Prediction for step {:d} = {:d}".format(element, prediction[0]))
+    for row in range(len(encoded_studentId)):
+        prediction = knn.predict_proba([[encoded_studentId[row], encoded_stepName[row]]])
+        prediction_array = np.append(prediction_array, prediction[0, 1])
+        print("Prediction for row {:d} = {:f}".format(row, prediction[0, 1]))
 
     print("prediction_array: ", prediction_array)
     rmse = math.sqrt(mean_squared_error(Y, prediction_array))
@@ -155,12 +154,45 @@ def calculate_rmse():
 calculate_rmse()
 
 
+
+if __name__ == '__main__':
+    # main()
+
+
+
+
+
+
 # **************************************************************************
 
+# Leaderboard:
 
 
 
 
+# 1) k = 101, weight = distance : RMSE =  0.30005410539677935
+
+# 2) k = 77, weight = distance : RMSE =  0.3002922082536437      ***
+# 3) k = 41, weight = distance : RMSE =  0.3016025310594197      ***
+
+# 4) k = 22, weight = distance : RMSE =  0.3042848486883858
+# 5) k = 11, weight = distance : RMSE =  0.3105935693719608
+# 6) k = 5, weight = distance : RMSE =  0.32554845858234405
+# 7) k = 11, weight = uniform : RMSE =  0.3832467437542604
+# 8) k = 5, weight = uniform : RMSE =  0.3845757273240957
+# 9) k = 22, weight = uniform : RMSE =  0.38497311222482195
+# 10) k = 41, weight = uniform : RMSE =  0.388534928948569
+# 11) k = 77, weight = uniform : RMSE =  0.39263912353244396
+# 12) k = 101, weight = uniform : RMSE =  0.39454656356815926
+
+
+
+
+
+
+
+
+# **************************************************************************
 
 
 
